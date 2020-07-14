@@ -213,7 +213,15 @@ Eng_Wls_Scot <- make_urban_rural_GB(filepath_Eng_1991_ur,
 # and the distance to the nearest ward
 ukb_ur_at_brth <- assign_nearest_ward(ukb_birth_loc, Eng_Wls_Scot)
 
-# STILL NEED TO GENERATE THE BINARY URBAN RURAL CLASSIFICATION!!!  
+# decide about the definition of urban vs rural. If places of category 1 are considered urban whilw everything else is rural, choose TRUE; 
+# if places of categories 1 and 2 are considered urban, choose FALSE
+only_cat_1_is_urban <- TRUE
 
+if(only_cat_1_is_urban){  
+  ukb_ur_at_brth_1<- mutate(ukb_ur_at_brth, Urban_birth = ifelse(ukb_ur_at_brth$category == 1, 1, 0))
+} else {
+  ukb_ur_at_brth_1<- mutate(ukb_ur_at_brth, Urban_birth = ifelse(ukb_ur_at_brth$category == 1 | ukb_ur_at_brth$category == 2, 1, 0))
+}
+  
 write.table(ukb_ur_at_brth, filepath_out, 
             append = FALSE, sep = "\t", quote = FALSE, col.names=TRUE, row.names=FALSE)
