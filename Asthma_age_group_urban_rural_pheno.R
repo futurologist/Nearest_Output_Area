@@ -54,7 +54,7 @@ names(IID_w)[1] <- 'IID'
 names(Covars)[1] <- 'IID'
 Covars <- left_join(IID_w, Covars, by='IID')
 
-Asthma_uu <- setup_asthma_u_or_r(Asthma, Urban_birth, Urban, IID_w, 1)                                 )
+Asthma_uu <- setup_asthma_u_or_r(Asthma, Urban_birth, Urban, IID_w, 1)
 Asthma_rr <- setup_asthma_u_or_r(Asthma, Urban_birth, Urban, IID_w, 0)
 Asthma_uu <- rename(Asthma_uu,  Asthma_under40_urban_v0 = Asthma_under40_v0)
 Asthma_rr <- rename(Asthma_rr,  Asthma_under40_rural_v0 = Asthma_under40_v0)
