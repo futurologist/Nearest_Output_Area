@@ -4,12 +4,9 @@ library(data.table)
 #############################################################################################################
 ########################### INPUT: ##########################################################################
 #############################################################################################################
-# The goal is first to create a Master Table with:
-# IID, Urban_brth, Urban, ethncity, Asthma total,  Asthma <40, Asthma age grps, genotypic array and principal components
-# rows: all samples from UKBiobank
-# Then filter the table to a table with the same columns but
-# rows: only from bgen sample 
-# Then extract tables with rows: only European, only form bgen file and only either urban or rural 
+# I need a universal table with:
+# rows: only European and only from bgen sample 
+# Asthma total, Asthma age grps, Asthma <40, Urban_brth, Urban, covs
 # Asthma_v0 with NA entries are not explicitly excluded, as SAIGE can handle NA phenotype entries.
 # However, the result is such that no sample has NA in Asthma_v0, possibly due to 
 # including only samples with genetically imputed data, hence samples who reported on Asthma_v0
@@ -93,33 +90,31 @@ gc()
 ##### rows = bgen sample, rural, European 
 ##### cols = asthma all | Asthma age grps | covariates
 cols <- c("IID", "Asthma_v0", "Asthma_under40_v0", "Asthma_Age_6_v0", "Asthma_Age_4_v0", "Asthma_Age_5_v0", "Genot_array", names(Asthma_ur_ethn_cov)[grepl('PC', names(Asthma_ur_ethn_cov))])
-Asthma_rr_eur_c <- Asthma_ur_ethn_cov[(European == 1) & (Urban_birth == 0) & (Urban == 0), ..cols]  
+Asthma_rr_eur_c <- Asthma_ur_ethn_cov[(European == 1) & (Origin == 'EUR') & (Urban_birth == 0) & (Urban == 0), ..cols]  
 Asthma_rr_eur_c <- data.table(FID = Asthma_rr_eur_c[,IID], Asthma_rr_eur_c)
 gc()
 
 N_r <- nrow(Asthma_rr_eur_c[!is.na(Asthma_v0), ]) 
 
-write.table(Asthma_rr_eur_c, paste(output_folder, "Asthma_rr_eur.txt",sep=""), append = FALSE, sep = "\t", quote = FALSE, col.names=TRUE, row.names=FALSE)
-
-View(fread(paste(output_folder, "Asthma_rr_eur.txt",sep="")))
-
 
 ##### rows = bgen sample, urban, European 
 ##### cols = asthma all | Asthma age grps | covariates
 cols <- c("IID", "Asthma_v0", "Asthma_under40_v0", "Asthma_Age_6_v0", "Asthma_Age_4_v0", "Asthma_Age_5_v0", "Genot_array", names(Asthma_ur_ethn_cov)[grepl('PC', names(Asthma_ur_ethn_cov))])
-Asthma_uu_eur_c <- Asthma_ur_ethn_cov[(European == 1) & (Urban_birth == 1) & (Urban == 1), ..cols]  
+Asthma_uu_eur_c <- Asthma_ur_ethn_cov[(European == 1) & (Origin=='EUR') & (Urban_birth == 1) & (Urban == 1), ..cols]  
 Asthma_uu_eur_c <- data.table(FID = Asthma_uu_eur_c[,IID], Asthma_uu_eur_c)
 gc()
 
 N_u <- nrow(Asthma_uu_eur_c[!is.na(Asthma_v0), ]) 
 
+
+###### export tables:
+write.table(Asthma_rr_eur_c, paste(output_folder, "Asthma_rr_eur.txt",sep=""), append = FALSE, sep = "\t", quote = FALSE, col.names=TRUE, row.names=FALSE)
+
+View(fread(paste(output_folder, "Asthma_rr_eur.txt",sep="")))
+
 write.table(Asthma_uu_eur_c, paste(output_folder, "Asthma_uu_eur.txt", sep=""), append = FALSE, sep = "\t", quote = FALSE, col.names=TRUE, row.names=FALSE)
 
-View(fread(paste(output_folder, "Asthma_uu_eur.txt",sep="")))
+View(fread(paste(output_folder, "Asthma_uu_eur.txt", sep="")))
 
 ##### rows = bgen sample, urban, European 
 ##### cols = asthma all | Asthma age grps | covariates
-
-
-##########################################################################################################
-
